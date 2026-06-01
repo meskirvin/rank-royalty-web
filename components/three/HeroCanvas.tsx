@@ -2,9 +2,10 @@
 
 import { Canvas } from "@react-three/fiber"
 import { Suspense, useEffect, useState } from "react"
+import { ScrollControls, Scroll } from "@react-three/drei"
 import HeroScene from "./HeroScene"
 
-export default function HeroCanvas() {
+export default function HeroCanvas({ children }: { children?: React.ReactNode }) {
   const [eventSource, setEventSource] = useState<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -28,7 +29,12 @@ export default function HeroCanvas() {
         }}
       >
         <Suspense fallback={null}>
-          <HeroScene />
+          <ScrollControls pages={6} damping={0.15} distance={1.2}>
+            <HeroScene />
+            <Scroll html style={{ width: "100vw" }}>
+              {children}
+            </Scroll>
+          </ScrollControls>
         </Suspense>
       </Canvas>
     </div>

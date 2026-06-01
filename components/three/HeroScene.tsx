@@ -2,6 +2,7 @@
 
 import { useRef, useMemo } from "react"
 import { useFrame } from "@react-three/fiber"
+import { useScroll } from "@react-three/drei"
 import { EffectComposer, Bloom, ChromaticAberration, Noise, Vignette, DepthOfField } from "@react-three/postprocessing"
 import { BlendFunction } from "postprocessing"
 import * as THREE from "three"
@@ -81,10 +82,29 @@ function ParticleCloud() {
   )
 }
 
+function SpatialJourney() {
+  const scroll = useScroll()
+  const groupRef = useRef<THREE.Group>(null)
+
+  useFrame(() => {
+    if (!groupRef.current) return
+    // Scroll offset 0 -> 1 moves the scene forward by 40 units to pass the camera
+    const targetZ = scroll.offset * 40
+    groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, 0.08)
+  })
+
+  return (
+    <group ref={groupRef}>
+      <ParticleCloud />
+      <SerpCards />
+    </group>
+  )
+}
+
 function CameraRig() {
   useFrame(({ camera, pointer }) => {
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointer.x * 0.6, 0.03)
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, pointer.y * 0.4, 0.03)
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointer.x * 0.4, 0.03)
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, pointer.y * 0.3, 0.03)
     camera.lookAt(0, 0, 0)
   })
   return null
@@ -98,9 +118,11 @@ export default function HeroScene() {
       <pointLight position={[-3, 2, 2]} intensity={1.5} color="#00ff87" distance={8} />
       <pointLight position={[ 3, -2, 2]} intensity={1.0} color="#7c3aed" distance={8} />
 
-      <BackgroundShader />
-      <ParticleCloud />
-      <SerpCards />
+      <group position={[0, 0, -50]} scale={[10, 10, 1]}>
+        <BackgroundShader />
+      </group>
+      
+      <SpatialJourney />
       <CameraRig />
 
       <EffectComposer>

@@ -19,29 +19,44 @@ interface CardData {
 const CARDS: CardData[] = [
   { position: [-2.2,  0.8, 0.4], rotation: [0.05, 0.25, -0.05], rank: 1, keyword: "seo agency near me",        domain: "rankroyalty.com",   color: "#00ff87", speed: 0.9,  phase: 0 },
   { position: [ 2.4,  0.4, 0.2], rotation: [0.0, -0.2, 0.04],   rank: 1, keyword: "best seo company",          domain: "rankroyalty.com",   color: "#00ff87", speed: 1.1,  phase: 1.5 },
-  { position: [-1.8, -1.0, 0.6], rotation: [-0.04, 0.15, 0.06], rank: 2, keyword: "local seo services",        domain: "rankroyalty.com",   color: "#a78bfa", speed: 0.85, phase: 3.0 },
-  { position: [ 1.8,  1.4, 0.1], rotation: [0.06, -0.12, -0.03],rank: 3, keyword: "technical seo audit",       domain: "rankroyalty.com",   color: "#60a5fa", speed: 1.2,  phase: 0.8 },
-  { position: [-3.0,  0.0, 0.0], rotation: [0.02, 0.3, -0.02],  rank: 1, keyword: "seo link building agency",  domain: "rankroyalty.com",   color: "#00ff87", speed: 0.95, phase: 2.2 },
-  { position: [ 3.1, -0.6, 0.3], rotation: [-0.03, -0.25, 0.03],rank: 4, keyword: "keyword research service",  domain: "rankroyalty.com",   color: "#f59e0b", speed: 1.05, phase: 4.1 },
+  { rank: 1, keyword: "seo agency near me",        domain: "rankroyalty.com",   color: "#00ff87", speed: 0.9,  phase: 0 },
+  { rank: 1, keyword: "best seo company",          domain: "rankroyalty.com",   color: "#00ff87", speed: 1.1,  phase: 1.5 },
+  { rank: 2, keyword: "local seo services",        domain: "rankroyalty.com",   color: "#a78bfa", speed: 0.85, phase: 3.0 },
+  { rank: 3, keyword: "technical seo audit",       domain: "rankroyalty.com",   color: "#60a5fa", speed: 1.2,  phase: 0.8 },
+  { rank: 1, keyword: "seo link building agency",  domain: "rankroyalty.com",   color: "#00ff87", speed: 0.95, phase: 2.2 },
+  { rank: 4, keyword: "keyword research service",  domain: "rankroyalty.com",   color: "#f59e0b", speed: 1.05, phase: 4.1 },
+]
+
+const TUNNEL_POSITIONS = [
+  { position: [-2.2, 1.2, 0], rotation: [0.1, 0.2, -0.1] },
+  { position: [2.5, -0.8, -7], rotation: [-0.1, -0.3, 0.1] },
+  { position: [-2.4, -1.5, -14], rotation: [0.2, 0.1, -0.05] },
+  { position: [2.2, 1.5, -21], rotation: [-0.15, -0.2, 0.1] },
+  { position: [-2.6, 0.5, -28], rotation: [0.05, 0.3, -0.1] },
+  { position: [2.0, -1.2, -35], rotation: [-0.1, -0.1, 0.05] }
 ]
 
 function SerpCard({ data, index }: { data: CardData; index: number }) {
   const groupRef = useRef<THREE.Group>(null)
+  const layout = TUNNEL_POSITIONS[index] || TUNNEL_POSITIONS[0]
+  
+  const basePos = useMemo(() => new THREE.Vector3(...layout.position), [layout])
+  const baseRot = useMemo(() => new THREE.Euler(...layout.rotation), [layout])
 
   useFrame(({ clock, pointer }) => {
     if (!groupRef.current) return
     const t = clock.getElapsedTime()
 
     // Organic Float animation
-    const targetY = data.position[1] + Math.sin(t * data.speed + data.phase) * 0.12 + Math.cos(t * data.speed * 0.4) * 0.04
-    const targetX = data.position[0] + Math.cos(t * data.speed * 0.7 + data.phase) * 0.08
-    const targetZ = data.position[2] + Math.sin(t * data.speed * 0.5 + data.phase) * 0.1
+    const targetY = basePos.y + Math.sin(t * data.speed + data.phase) * 0.12 + Math.cos(t * data.speed * 0.4) * 0.04
+    const targetX = basePos.x + Math.cos(t * data.speed * 0.7 + data.phase) * 0.08
+    const targetZ = basePos.z + Math.sin(t * data.speed * 0.5 + data.phase) * 0.1
 
     groupRef.current.position.set(targetX, targetY, targetZ)
 
     // Smooth mouse parallax
-    const targetRotY = data.rotation[1] + pointer.x * 0.15
-    const targetRotX = data.rotation[0] - pointer.y * 0.15
+    const targetRotY = baseRot.y + pointer.x * 0.15
+    const targetRotX = baseRot.x - pointer.y * 0.15
     
     groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.05)
     groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX, 0.05)

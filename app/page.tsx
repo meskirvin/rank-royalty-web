@@ -12,6 +12,8 @@ import FAQItem from "@/components/FAQItem"
 import HeroContent from "@/components/HeroContent"
 import { faqSchema, serviceSchema } from "@/lib/structured-data"
 
+const HeroCanvas = dynamic(() => import("@/components/three/HeroCanvas"), { ssr: false })
+
 export function generateMetadata(): Metadata {
   return {
     title: "Rank Royalty | SEO Agency That Actually Ranks",
@@ -50,11 +52,13 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
 
-      {/* ── HERO ────────────────────────────────────────────────────── */}
-      <section className="relative" style={{ height: "100vh" }} aria-labelledby="hero-heading">
-        {/* HTML overlay */}
-        <HeroContent />
-      </section>
+      {/* ── SPATIAL JOURNEY WRAPPER ─────────────────────────────────── */}
+      <HeroCanvas>
+        {/* ── HERO ────────────────────────────────────────────────────── */}
+        <section className="relative" style={{ height: "100vh" }} aria-labelledby="hero-heading">
+          {/* HTML overlay */}
+          <HeroContent />
+        </section>
 
       {/* ── TICKER ──────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden border-y py-4" style={{ borderColor: "rgba(255,255,255,0.05)", background: "rgba(0,0,0,0.4)", backdropFilter: "blur(20px)" }} aria-hidden="true">
@@ -255,6 +259,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      </HeroCanvas>
     </>
   )
 }
