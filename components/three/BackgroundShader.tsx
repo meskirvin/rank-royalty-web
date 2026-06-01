@@ -67,30 +67,36 @@ const fragmentShader = `
     float t = uTime * 0.18;
 
     // Layered noise for organic feel
-    float n1 = cnoise(vec3(uv * 2.5 + mouse, t));
-    float n2 = cnoise(vec3(uv * 5.0 - mouse * 0.5, t * 1.3 + 10.0));
-    float n3 = cnoise(vec3(uv * 1.2 + mouse * 0.2, t * 0.7 + 5.0));
+    float n1 = cnoise(vec3(uv * 1.5 + mouse * 0.5, t * 0.8));
+    float n2 = cnoise(vec3(uv * 3.0 - mouse * 0.2, t * 1.2 + 10.0));
+    float n3 = cnoise(vec3(uv * 0.8 + mouse * 0.8, t * 0.5 + 5.0));
 
-    float n = n1 * 0.5 + n2 * 0.3 + n3 * 0.2;
-    n = n * 0.5 + 0.5;
+    // Create a ridged noise effect for glowing veins
+    float n = abs(n1 * 0.5 + n2 * 0.3 + n3 * 0.2);
+    n = 1.0 - n; // invert so peaks are bright
+    n = pow(n, 2.5); // sharpen peaks
 
-    // Color palette — dark green to purple
-    vec3 colA = vec3(0.0,  0.05, 0.04);  // near black green
-    vec3 colB = vec3(0.02, 0.0,  0.08);  // near black purple
-    vec3 colC = vec3(0.0,  0.18, 0.08);  // dark green
-    vec3 colD = vec3(0.12, 0.0,  0.22);  // dark purple
+    // Color palette
+    vec3 colA = vec3(0.005, 0.015, 0.01); // ultra dark green
+    vec3 colB = vec3(0.01, 0.005, 0.02);  // ultra dark purple
+    vec3 colC = vec3(0.0, 0.5, 0.2);      // bright green glow (based on #00ff87)
+    vec3 colD = vec3(0.4, 0.1, 0.7);      // bright purple glow (based on #7c3aed)
 
-    vec3 col = mix(colA, colB, uv.x);
-    col = mix(col, mix(colC, colD, uv.x), n * 0.6);
+    // Base background gradient
+    vec3 bg = mix(colA, colB, uv.x + n1 * 0.2);
+
+    // Glowing veins
+    vec3 glowColor = mix(colC, colD, sin(uv.y * 3.0 + t + mouse.x) * 0.5 + 0.5);
+    vec3 col = mix(bg, glowColor, n * 0.3);
 
     // Subtle vignette
-    float vignette = smoothstep(1.4, 0.4, length(uv - 0.5));
-    col *= vignette * 1.2;
+    float vignette = smoothstep(1.5, 0.3, length(uv - 0.5));
+    col *= vignette;
 
-    // Glow at centre
-    float glow = 1.0 - length((uv - 0.5) * vec2(1.6, 2.0));
-    glow = clamp(glow, 0.0, 1.0);
-    col += vec3(0.0, 0.04, 0.02) * glow * n;
+    // Central soft glow
+    float centerGlow = 1.0 - length((uv - 0.5) * vec2(1.2, 1.5));
+    centerGlow = clamp(centerGlow, 0.0, 1.0);
+    col += mix(colC, colD, 0.5) * 0.08 * pow(centerGlow, 3.0);
 
     gl_FragColor = vec4(col, 1.0);
   }

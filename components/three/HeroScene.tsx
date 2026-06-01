@@ -26,8 +26,10 @@ function ParticleCloud() {
 
   useFrame(({ clock, pointer }) => {
     if (!ref.current) return
-    ref.current.rotation.y = clock.getElapsedTime() * 0.015
-    ref.current.rotation.x = pointer.y * 0.05
+    const t = clock.getElapsedTime()
+    ref.current.rotation.y = t * 0.015 + pointer.x * 0.05
+    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, pointer.y * 0.1, 0.05)
+    ref.current.position.y = Math.sin(t * 0.3) * 0.15
   })
 
   return (
@@ -50,8 +52,8 @@ function ParticleCloud() {
 
 function CameraRig() {
   useFrame(({ camera, pointer }) => {
-    camera.position.x += (pointer.x * 0.3 - camera.position.x) * 0.04
-    camera.position.y += (pointer.y * 0.2 - camera.position.y) * 0.04
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointer.x * 0.6, 0.03)
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, pointer.y * 0.4, 0.03)
     camera.lookAt(0, 0, 0)
   })
   return null
@@ -72,19 +74,19 @@ export default function HeroScene() {
 
       <EffectComposer>
         <Bloom
-          intensity={1.2}
-          luminanceThreshold={0.3}
+          intensity={1.5}
+          luminanceThreshold={0.4}
           luminanceSmoothing={0.9}
           blendFunction={BlendFunction.ADD}
         />
         <ChromaticAberration
-          offset={new THREE.Vector2(0.0008, 0.0008)}
+          offset={new THREE.Vector2(0.0015, 0.0015)}
           blendFunction={BlendFunction.NORMAL}
-          radialModulation={false}
-          modulationOffset={0}
+          radialModulation={true}
+          modulationOffset={0.2}
         />
-        <Noise opacity={0.03} blendFunction={BlendFunction.SOFT_LIGHT} />
-        <Vignette eskil={false} offset={0.3} darkness={0.8} />
+        <Noise opacity={0.06} blendFunction={BlendFunction.SOFT_LIGHT} />
+        <Vignette eskil={false} offset={0.5} darkness={1.0} />
       </EffectComposer>
     </>
   )

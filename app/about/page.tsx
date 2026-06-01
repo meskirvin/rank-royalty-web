@@ -2,11 +2,13 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Zap, Eye, Target } from "lucide-react"
 
-export const metadata: Metadata = {
-  title: "About Rank Royalty",
-  description:
-    "Rank Royalty is a lean, focused SEO agency built by practitioners — not salespeople. We believe in transparency, real results, and treating clients like partners.",
-  alternates: { canonical: "https://rankroyalty.com/about" },
+export function generateMetadata(): Metadata {
+  return {
+    title: "About Rank Royalty",
+    description:
+      "Rank Royalty is a lean, focused SEO agency built by practitioners — not salespeople. We believe in transparency, real results, and treating clients like partners.",
+    alternates: { canonical: "https://rankroyalty.com/about" },
+  }
 }
 
 const VALUES = [

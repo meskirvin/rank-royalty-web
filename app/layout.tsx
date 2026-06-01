@@ -6,6 +6,9 @@ import Navigation from "@/components/Navigation"
 import Footer from "@/components/Footer"
 import SmoothScroll from "@/components/SmoothScroll"
 import Cursor from "@/components/Cursor"
+import dynamic from "next/dynamic"
+
+const HeroCanvas = dynamic(() => import("@/components/three/HeroCanvas"), { ssr: false })
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" })
 
@@ -48,10 +51,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       </head>
       <body>
+        <HeroCanvas />
         <SmoothScroll>
           <Cursor />
           <Navigation />
-          <main className="page-content">{children}</main>
+          <main className="page-content relative z-10">{children}</main>
           <Footer />
         </SmoothScroll>
       </body>

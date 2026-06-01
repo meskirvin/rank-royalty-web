@@ -32,13 +32,19 @@ function SerpCard({ data, index }: { data: CardData; index: number }) {
     if (!groupRef.current) return
     const t = clock.getElapsedTime()
 
-    // Float animation
-    groupRef.current.position.y = data.position[1] + Math.sin(t * data.speed + data.phase) * 0.08
-    groupRef.current.position.x = data.position[0] + Math.cos(t * data.speed * 0.7 + data.phase) * 0.04
+    // Organic Float animation
+    const targetY = data.position[1] + Math.sin(t * data.speed + data.phase) * 0.12 + Math.cos(t * data.speed * 0.4) * 0.04
+    const targetX = data.position[0] + Math.cos(t * data.speed * 0.7 + data.phase) * 0.08
+    const targetZ = data.position[2] + Math.sin(t * data.speed * 0.5 + data.phase) * 0.1
 
-    // Subtle mouse parallax
-    groupRef.current.rotation.y = data.rotation[1] + pointer.x * 0.06
-    groupRef.current.rotation.x = data.rotation[0] - pointer.y * 0.04
+    groupRef.current.position.set(targetX, targetY, targetZ)
+
+    // Smooth mouse parallax
+    const targetRotY = data.rotation[1] + pointer.x * 0.15
+    const targetRotX = data.rotation[0] - pointer.y * 0.15
+    
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.05)
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX, 0.05)
   })
 
   const glowColor = new THREE.Color(data.color)
@@ -52,13 +58,16 @@ function SerpCard({ data, index }: { data: CardData; index: number }) {
       {/* Card body */}
       <RoundedBox args={[1.7, 0.72, 0.04]} radius={0.04} smoothness={4}>
         <meshPhysicalMaterial
-          color="#0a0a12"
-          metalness={0.1}
-          roughness={0.1}
-          transmission={0.15}
-          thickness={0.04}
+          color="#1a1a24"
+          metalness={0.2}
+          roughness={0.15}
+          transmission={1}
+          ior={1.5}
+          thickness={0.5}
+          clearcoat={1}
+          clearcoatRoughness={0.1}
           transparent
-          opacity={0.92}
+          opacity={1}
           side={THREE.FrontSide}
         />
       </RoundedBox>

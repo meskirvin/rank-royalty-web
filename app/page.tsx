@@ -12,13 +12,12 @@ import FAQItem from "@/components/FAQItem"
 import HeroContent from "@/components/HeroContent"
 import { faqSchema, serviceSchema } from "@/lib/structured-data"
 
-// Load WebGL canvas client-side only — SSR incompatible
-const HeroCanvas = dynamic(() => import("@/components/three/HeroCanvas"), { ssr: false })
-
-export const metadata: Metadata = {
-  title: "Rank Royalty | SEO Agency That Actually Ranks",
-  description: "We build organic growth engines through technical SEO, content strategy, and authoritative link building. Scan your site free — see exactly what's holding you back.",
-  alternates: { canonical: "https://rankroyalty.com" },
+export function generateMetadata(): Metadata {
+  return {
+    title: "Rank Royalty | SEO Agency That Actually Ranks",
+    description: "We build organic growth engines through technical SEO, content strategy, and authoritative link building. Scan your site free — see exactly what's holding you back.",
+    alternates: { canonical: "https://rankroyalty.com" },
+  }
 }
 
 const SERVICES = [
@@ -53,9 +52,6 @@ export default function HomePage() {
 
       {/* ── HERO ────────────────────────────────────────────────────── */}
       <section className="relative" style={{ height: "100vh" }} aria-labelledby="hero-heading">
-        {/* WebGL Canvas — fixed behind everything */}
-        <HeroCanvas />
-
         {/* HTML overlay */}
         <HeroContent />
       </section>

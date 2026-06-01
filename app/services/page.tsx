@@ -6,11 +6,13 @@ import {
 } from "lucide-react"
 import TiltCard from "@/components/TiltCard"
 
-export const metadata: Metadata = {
-  title: "SEO Services",
-  description:
-    "Technical SEO, local SEO, link building, content strategy, and keyword research. Every service Rank Royalty offers is built around one goal: organic growth that compounds.",
-  alternates: { canonical: "https://rankroyalty.com/services" },
+export function generateMetadata(): Metadata {
+  return {
+    title: "SEO Services",
+    description:
+      "Technical SEO, local SEO, link building, content strategy, and keyword research. Every service Rank Royalty offers is built around one goal: organic growth that compounds.",
+    alternates: { canonical: "https://rankroyalty.com/services" },
+  }
 }
 
 const SERVICES = [

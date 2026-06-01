@@ -2,11 +2,13 @@ import type { Metadata } from "next"
 import ContactForm from "@/components/ContactForm"
 import { Mail, Clock, CheckCircle2 } from "lucide-react"
 
-export const metadata: Metadata = {
-  title: "Get a Free SEO Audit",
-  description:
-    "Request your free 47-point SEO audit from Rank Royalty. We'll analyze your site and give you a clear picture of what's holding your rankings back — no pitch, no pressure.",
-  alternates: { canonical: "https://rankroyalty.com/contact" },
+export function generateMetadata(): Metadata {
+  return {
+    title: "Get a Free SEO Audit",
+    description:
+      "Request your free 47-point SEO audit from Rank Royalty. We'll analyze your site and give you a clear picture of what's holding your rankings back — no pitch, no pressure.",
+    alternates: { canonical: "https://rankroyalty.com/contact" },
+  }
 }
 
 export default function ContactPage() {
