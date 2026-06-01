@@ -2,12 +2,10 @@
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import SeoScanner from "./SeoScanner"
 import Preloader from "./Preloader"
 
 export default function HeroContent() {
   const [loaded, setLoaded] = useState(false)
-  const headingRef = useRef<HTMLHeadingElement>(null)
 
   return (
     <>
@@ -15,54 +13,100 @@ export default function HeroContent() {
 
       <div
         className="hero-section px-6"
-        style={{ opacity: loaded ? 1 : 0, transition: "opacity 0.8s ease 0.2s" }}
+        style={{ opacity: loaded ? 1 : 0, transition: "opacity 1s ease 0.3s" }}
       >
         {/* Badge */}
         <div
-          className="mb-8 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium"
-          style={{ border: "1px solid rgba(0,255,135,0.2)", background: "rgba(0,255,135,0.05)", color: "#00ff87" }}
+          className="mb-10 flex items-center gap-2 px-4 py-2"
+          style={{
+            border: "1px solid rgba(0,255,135,0.15)",
+            background: "rgba(0,255,135,0.04)",
+            color: "rgba(0,255,135,0.7)",
+            fontSize: 10,
+            letterSpacing: "0.2em",
+            fontWeight: 600,
+          }}
         >
           <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00ff87" }} />
-          Accepting new clients · Free SEO Audit Available
+          / CINEMATIC SEO INTELLIGENCE
         </div>
 
-        {/* Headline */}
-        <h1
-          ref={headingRef}
-          className="text-center font-bold tracking-tight leading-none text-balance"
-          style={{ fontSize: "clamp(52px, 8vw, 96px)" }}
-          id="hero-heading"
-        >
-          <span className="text-white block">Rank Higher.</span>
-          <span className="gradient-text block">Grow Faster.</span>
-          <span className="text-white block">Actually.</span>
-        </h1>
+        {/* Main headline — editorial style */}
+        <div className="text-center" style={{ pointerEvents: "none" }}>
+          <h1
+            id="hero-heading"
+            style={{
+              lineHeight: 0.88,
+              letterSpacing: "-0.02em",
+              textTransform: "uppercase",
+            }}
+          >
+            <span
+              className="block text-white font-black"
+              style={{ fontSize: "clamp(72px, 14vw, 160px)", letterSpacing: "-0.03em" }}
+            >
+              SEARCH
+            </span>
+            <span
+              className="block font-black italic"
+              style={{
+                fontSize: "clamp(72px, 14vw, 160px)",
+                letterSpacing: "-0.03em",
+                background: "linear-gradient(135deg, #00ff87 0%, #00d4ff 50%, #7c3aed 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              DOMINANCE
+            </span>
+          </h1>
+        </div>
 
+        {/* Subtitle */}
         <p
-          className="mt-8 text-center text-balance max-w-xl"
-          style={{ color: "rgba(255,255,255,0.45)", fontSize: 18, lineHeight: 1.7 }}
+          className="mt-10 text-center max-w-lg"
+          style={{ color: "rgba(255,255,255,0.4)", fontSize: 15, lineHeight: 1.8, letterSpacing: "0.01em" }}
         >
-          We build organic growth engines through technical SEO, content strategy, and link building that compounds over time.
+          Transcending traditional SEO. We deploy cinematic growth strategies through algorithmic precision and behavioral intelligence.
         </p>
 
-        {/* Scanner */}
-        <div className="mt-12 w-full max-w-2xl">
-          <p className="text-center text-xs mb-4" style={{ color: "rgba(255,255,255,0.25)" }}>
-            ← Enter your URL for a free instant SEO analysis →
-          </p>
-          <SeoScanner />
+        {/* CTAs */}
+        <div className="mt-12 flex items-center gap-5" style={{ pointerEvents: "auto" }}>
+          <Link
+            href="/contact"
+            className="font-bold transition-all duration-200 hover:bg-white"
+            style={{
+              padding: "14px 36px",
+              background: "#00ff87",
+              color: "#060608",
+              fontSize: 11,
+              letterSpacing: "0.18em",
+              fontWeight: 700,
+            }}
+          >
+            SECURE TERRITORY
+          </Link>
+          <Link
+            href="/services"
+            className="font-semibold transition-all duration-200"
+            style={{
+              fontSize: 11,
+              letterSpacing: "0.18em",
+              color: "rgba(255,255,255,0.5)",
+            }}
+          >
+            EXPLORE METHOD ↓
+          </Link>
         </div>
 
-        {/* Scroll hint */}
+        {/* Scroll indicator */}
         <div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          style={{ color: "rgba(255,255,255,0.18)", fontSize: 11 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+          style={{ color: "rgba(255,255,255,0.15)" }}
         >
-          <span style={{ letterSpacing: "0.15em", textTransform: "uppercase" }}>Scroll</span>
-          <div
-            className="w-px h-12"
-            style={{ background: "linear-gradient(to bottom, rgba(0,255,135,0.3), transparent)" }}
-          />
+          <span style={{ fontSize: 9, letterSpacing: "0.25em" }}>SCROLL</span>
+          <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, rgba(0,255,135,0.4), transparent)" }} />
         </div>
       </div>
     </>
