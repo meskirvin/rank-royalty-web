@@ -103,7 +103,7 @@ export default function HeroScene() {
       <SerpCards />
       <CameraRig />
 
-      <EffectComposer disableNormalPass>
+      <EffectComposer>
         <DepthOfField
           focusDistance={0.01}
           focalLength={0.05}
