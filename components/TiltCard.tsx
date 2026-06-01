@@ -6,9 +6,10 @@ interface TiltCardProps {
   children: React.ReactNode
   className?: string
   glowColor?: string
+  style?: React.CSSProperties
 }
 
-export default function TiltCard({ children, className = "", glowColor = "#00ff87" }: TiltCardProps) {
+export default function TiltCard({ children, className = "", glowColor = "#00ff87", style }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
 
   function onMouseMove(e: React.MouseEvent<HTMLDivElement>) {
@@ -47,7 +48,7 @@ export default function TiltCard({ children, className = "", glowColor = "#00ff8
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       className={`relative overflow-hidden transition-transform duration-200 ease-out ${className}`}
-      style={{ willChange: "transform" }}
+      style={{ willChange: "transform", ...style }}
     >
       {/* Spotlight glow */}
       <div

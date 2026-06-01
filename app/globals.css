@@ -3,34 +3,41 @@
 @tailwind utilities;
 
 :root {
-  --font-inter: "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --green: #00ff87;
+  --purple: #7c3aed;
+  --dark: #060608;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-}
+html { -webkit-font-smoothing: antialiased; }
 
 body {
-  background: #0a0a0f;
+  background: var(--dark);
   color: #e4e4f0;
-  font-family: var(--font-inter);
+  font-family: "Inter", system-ui, sans-serif;
   overflow-x: hidden;
+  cursor: none;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0a0a0f; }
-::-webkit-scrollbar-thumb { background: #2a2a3e; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #00ff87; }
+/* Hide default cursor everywhere */
+*, *:hover { cursor: none !important; }
+
+/* Smooth scroll handled by Lenis — disable native */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #060608; }
+::-webkit-scrollbar-thumb { background: #1a1a2e; border-radius: 2px; }
 
 /* Selection */
-::selection { background: rgba(0,255,135,0.2); color: #00ff87; }
+::selection { background: rgba(0,255,135,0.15); color: #00ff87; }
 
-/* Gradient text utility */
+/* Gradient text */
 .gradient-text {
   background: linear-gradient(135deg, #00ff87 0%, #7c3aed 100%);
   -webkit-background-clip: text;
@@ -38,52 +45,58 @@ body {
   background-clip: text;
 }
 
-.gradient-text-reverse {
-  background: linear-gradient(135deg, #7c3aed 0%, #00ff87 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glass card */
+/* Glass */
 .glass {
-  background: rgba(17, 17, 24, 0.8);
-  backdrop-filter: blur(12px);
+  background: rgba(10,10,16,0.7);
+  backdrop-filter: blur(20px);
   border: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Glow effects */
-.glow-green { box-shadow: 0 0 30px rgba(0,255,135,0.2); }
-.glow-purple { box-shadow: 0 0 30px rgba(124,58,237,0.3); }
+/* WebGL canvas */
+#hero-canvas {
+  position: fixed !important;
+  top: 0; left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 0;
+  pointer-events: none;
+}
 
-/* Noise texture overlay */
-.noise::before {
+/* Sections sit above canvas */
+.page-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Clip blend for text over 3D */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-section > * { pointer-events: auto; }
+
+/* GSAP split text — chars wrap */
+.split-word { display: inline-block; overflow: hidden; }
+.split-char { display: inline-block; will-change: transform; }
+
+/* Noise grain overlay */
+body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.03;
   pointer-events: none;
   z-index: 9999;
 }
 
-/* Cursor glow */
-.cursor-glow {
-  position: fixed;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,255,135,0.06) 0%, transparent 70%);
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s;
-  z-index: 0;
-}
-
 @layer utilities {
   .text-balance { text-wrap: balance; }
-  .animation-delay-200 { animation-delay: 200ms; }
-  .animation-delay-400 { animation-delay: 400ms; }
-  .animation-delay-600 { animation-delay: 600ms; }
-  .animation-delay-800 { animation-delay: 800ms; }
 }
