@@ -58,23 +58,29 @@ function SerpCard({ data, index }: { data: CardData; index: number }) {
       {/* Card body */}
       <RoundedBox args={[1.7, 0.72, 0.04]} radius={0.04} smoothness={4}>
         <meshPhysicalMaterial
-          color="#1a1a24"
-          metalness={0.2}
+          color="#ffffff"
+          metalness={0.1}
           roughness={0.15}
           transmission={1}
-          ior={1.5}
-          thickness={0.5}
+          ior={1.52}
+          thickness={0.8}
+          attenuationColor={glowColor}
+          attenuationDistance={0.5}
           clearcoat={1}
           clearcoatRoughness={0.1}
           transparent
-          opacity={1}
-          side={THREE.FrontSide}
         />
       </RoundedBox>
 
       {/* Border glow */}
       <RoundedBox args={[1.72, 0.74, 0.035]} radius={0.042} smoothness={4}>
-        <meshBasicMaterial color={data.color} transparent opacity={0.12} side={THREE.BackSide} />
+        <meshBasicMaterial 
+          color={data.color} 
+          transparent 
+          opacity={0.25} 
+          blending={THREE.AdditiveBlending} 
+          side={THREE.BackSide} 
+        />
       </RoundedBox>
 
       {/* Rank badge */}
@@ -137,8 +143,8 @@ function SerpCard({ data, index }: { data: CardData; index: number }) {
       <pointLight
         position={[0, 0, -0.3]}
         color={glowColor}
-        intensity={0.4}
-        distance={1.5}
+        intensity={1.5}
+        distance={2.5}
       />
     </group>
   )

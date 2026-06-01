@@ -60,43 +60,63 @@ const fragmentShader = `
     return 2.2*n_xyz;
   }
 
+  // Fractional Brownian Motion
+  float fbm(vec3 x) {
+    float v = 0.0;
+    float a = 0.5;
+    vec3 shift = vec3(100.0);
+    for (int i = 0; i < 4; ++i) {
+      v += a * cnoise(x);
+      x = x * 2.0 + shift;
+      a *= 0.5;
+    }
+    return v;
+  }
+
   void main() {
     vec2 uv = vUv;
-    vec2 mouse = uMouse * 0.3;
+    vec2 mouse = uMouse * 0.5;
 
-    float t = uTime * 0.18;
+    float t = uTime * 0.15;
 
-    // Layered noise for organic feel
-    float n1 = cnoise(vec3(uv * 1.5 + mouse * 0.5, t * 0.8));
-    float n2 = cnoise(vec3(uv * 3.0 - mouse * 0.2, t * 1.2 + 10.0));
-    float n3 = cnoise(vec3(uv * 0.8 + mouse * 0.8, t * 0.5 + 5.0));
+    // Domain Warping for fluid effect
+    vec3 p = vec3(uv * 2.0 + mouse, t);
+    
+    vec3 q;
+    q.x = fbm(p + vec3(0.0, 0.0, t * 0.5));
+    q.y = fbm(p + vec3(5.2, 1.3, t * 0.6));
+    q.z = 0.0;
 
-    // Create a ridged noise effect for glowing veins
-    float n = abs(n1 * 0.5 + n2 * 0.3 + n3 * 0.2);
-    n = 1.0 - n; // invert so peaks are bright
-    n = pow(n, 2.5); // sharpen peaks
+    vec3 r;
+    r.x = fbm(p + 3.0 * q + vec3(1.7, 9.2, t * 0.8));
+    r.y = fbm(p + 3.0 * q + vec3(8.3, 2.8, t * 0.9));
+    r.z = 0.0;
 
-    // Color palette
+    float n = fbm(p + 3.0 * r);
+    n = n * 0.5 + 0.5; // normalize to 0-1
+    n = pow(n, 1.5); // sharpen contrast
+
+    // Color palette - Active Theory deep fluid tones
     vec3 colA = vec3(0.005, 0.015, 0.01); // ultra dark green
     vec3 colB = vec3(0.01, 0.005, 0.02);  // ultra dark purple
-    vec3 colC = vec3(0.0, 0.5, 0.2);      // bright green glow (based on #00ff87)
-    vec3 colD = vec3(0.4, 0.1, 0.7);      // bright purple glow (based on #7c3aed)
+    vec3 colC = vec3(0.0, 0.6, 0.3);      // vibrant green liquid
+    vec3 colD = vec3(0.5, 0.1, 0.9);      // vibrant purple liquid
 
-    // Base background gradient
-    vec3 bg = mix(colA, colB, uv.x + n1 * 0.2);
+    // Base background gradient based on coordinates and first warp pass
+    vec3 bg = mix(colA, colB, uv.x + q.x * 0.5);
 
-    // Glowing veins
-    vec3 glowColor = mix(colC, colD, sin(uv.y * 3.0 + t + mouse.x) * 0.5 + 0.5);
-    vec3 col = mix(bg, glowColor, n * 0.3);
+    // Glowing veins based on second warp pass
+    vec3 glowColor = mix(colC, colD, r.x);
+    vec3 col = mix(bg, glowColor, n * clamp(r.y * 1.5, 0.0, 1.0));
 
     // Subtle vignette
-    float vignette = smoothstep(1.5, 0.3, length(uv - 0.5));
+    float vignette = smoothstep(1.5, 0.2, length(uv - 0.5));
     col *= vignette;
 
-    // Central soft glow
+    // Deep central glow to tie it together
     float centerGlow = 1.0 - length((uv - 0.5) * vec2(1.2, 1.5));
     centerGlow = clamp(centerGlow, 0.0, 1.0);
-    col += mix(colC, colD, 0.5) * 0.08 * pow(centerGlow, 3.0);
+    col += mix(colC, colD, 0.5) * 0.15 * pow(centerGlow, 3.0);
 
     gl_FragColor = vec4(col, 1.0);
   }
