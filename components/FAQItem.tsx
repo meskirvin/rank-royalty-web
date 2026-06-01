@@ -9,23 +9,22 @@ export default function FAQItem({ q, a }: FAQItemProps) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className={`glass rounded-xl border transition-colors duration-200 ${open ? "border-brand-green/20" : "border-white/5"}`}>
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-5 text-left gap-4"
-        aria-expanded={open}
-      >
+    <div style={{
+      background: "rgba(8,6,2,0.85)", backdropFilter: "blur(20px)",
+      border: `1px solid ${open ? "rgba(212,175,55,0.2)" : "rgba(212,175,55,0.07)"}`,
+      transition: "border-color 0.2s",
+    }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-6 text-left gap-4" aria-expanded={open}>
         <span className="text-white font-medium text-sm">{q}</span>
-        <ChevronDown
-          size={16}
-          className={`text-white/40 shrink-0 transition-transform duration-300 ${open ? "rotate-180 text-brand-green" : ""}`}
-          aria-hidden="true"
-        />
+        <ChevronDown size={15} style={{
+          color: open ? "#D4AF37" : "rgba(232,224,208,0.3)",
+          transform: open ? "rotate(180deg)" : "none",
+          transition: "transform 0.3s ease, color 0.2s",
+          flexShrink: 0,
+        }} aria-hidden="true" />
       </button>
-      <div
-        className={`overflow-hidden transition-all duration-300 ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
-      >
-        <p className="px-5 pb-5 text-white/50 text-sm leading-relaxed">{a}</p>
+      <div style={{ overflow: "hidden", maxHeight: open ? 400 : 0, opacity: open ? 1 : 0, transition: "max-height 0.35s ease, opacity 0.3s ease" }}>
+        <p style={{ padding: "0 24px 24px", color: "rgba(232,224,208,0.45)", fontSize: 14, lineHeight: 1.85 }}>{a}</p>
       </div>
     </div>
   )

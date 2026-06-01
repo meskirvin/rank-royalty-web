@@ -3,9 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --green: #00ff87;
-  --purple: #7c3aed;
-  --dark: #060608;
+  --gold:        #D4AF37;
+  --gold-bright: #FFD060;
+  --gold-dark:   #8B6914;
+  --dark:        #050505;
+  --font-serif:  "Playfair Display", Georgia, serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,45 +16,47 @@ html { -webkit-font-smoothing: antialiased; }
 
 body {
   background: var(--dark);
-  color: #e4e4f0;
+  color: #e8e0d0;
   font-family: "Inter", system-ui, sans-serif;
   overflow-x: hidden;
   cursor: none;
 }
 
-/* Hide default cursor everywhere */
 *, *:hover { cursor: none !important; }
 
-/* Smooth scroll handled by Lenis — disable native */
 html.lenis { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #060608; }
-::-webkit-scrollbar-thumb { background: #1a1a2e; border-radius: 2px; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background: #2a2010; border-radius: 2px; }
 
-/* Selection */
-::selection { background: rgba(0,255,135,0.15); color: #00ff87; }
+::selection { background: rgba(212,175,55,0.2); color: #FFD060; }
 
-/* Gradient text */
+/* Gold gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #00ff87 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #FFD060 0%, #D4AF37 50%, #8B6914 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Glass */
-.glass {
-  background: rgba(10,10,16,0.7);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.06);
+.gradient-text-light {
+  background: linear-gradient(135deg, #fff 0%, #FFD060 60%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* WebGL canvas */
+/* Glass card — dark with gold border */
+.glass {
+  background: rgba(8,6,2,0.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212,175,55,0.12);
+}
+
+/* WebGL canvas layer */
 #hero-canvas {
   position: fixed !important;
   top: 0; left: 0;
@@ -62,13 +66,8 @@ html.lenis { height: auto; }
   pointer-events: none;
 }
 
-/* Sections sit above canvas */
-.page-content {
-  position: relative;
-  z-index: 1;
-}
+.page-content { position: relative; z-index: 1; }
 
-/* Clip blend for text over 3D */
 .hero-section {
   position: relative;
   height: 100vh;
@@ -79,20 +78,18 @@ html.lenis { height: auto; }
   z-index: 2;
   pointer-events: none;
 }
-
 .hero-section > * { pointer-events: auto; }
 
-/* GSAP split text — chars wrap */
-.split-word { display: inline-block; overflow: hidden; }
-.split-char { display: inline-block; will-change: transform; }
+/* Royal serif display */
+.serif { font-family: var(--font-serif); }
 
-/* Noise grain overlay */
+/* Noise grain */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.03;
+  opacity: 0.04;
   pointer-events: none;
   z-index: 9999;
 }

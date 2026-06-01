@@ -15,108 +15,52 @@ const vertexShader = `
 const fragmentShader = `
   uniform float uTime;
   uniform vec2  uMouse;
-  uniform vec2  uResolution;
   varying vec2  vUv;
 
-  vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-  vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-  vec4 permute(vec4 x) { return mod289(((x*34.0)+10.0)*x); }
-  vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-  vec3 fade(vec3 t) { return t*t*t*(t*(t*6.0-15.0)+10.0); }
-
-  float cnoise(vec3 P) {
-    vec3 Pi0 = floor(P);
-    vec3 Pi1 = Pi0 + vec3(1.0);
-    Pi0 = mod289(Pi0); Pi1 = mod289(Pi1);
-    vec3 Pf0 = fract(P);
-    vec3 Pf1 = Pf0 - vec3(1.0);
-    vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
-    vec4 iy = vec4(Pi0.yy, Pi1.yy);
-    vec4 iz0 = Pi0.zzzz; vec4 iz1 = Pi1.zzzz;
-    vec4 ixy = permute(permute(ix) + iy);
-    vec4 ixy0 = permute(ixy + iz0); vec4 ixy1 = permute(ixy + iz1);
-    vec4 gx0 = ixy0 * (1.0/7.0); vec4 gy0 = fract(floor(gx0)*(1.0/7.0)) - 0.5;
-    gx0 = fract(gx0); vec4 gz0 = vec4(0.5)-abs(gx0)-abs(gy0);
-    vec4 sz0 = step(gz0, vec4(0.0)); gx0 -= sz0*(step(0.0,gx0)-0.5); gy0 -= sz0*(step(0.0,gy0)-0.5);
-    vec4 gx1 = ixy1*(1.0/7.0); vec4 gy1 = fract(floor(gx1)*(1.0/7.0))-0.5;
-    gx1 = fract(gx1); vec4 gz1 = vec4(0.5)-abs(gx1)-abs(gy1);
-    vec4 sz1 = step(gz1,vec4(0.0)); gx1 -= sz1*(step(0.0,gx1)-0.5); gy1 -= sz1*(step(0.0,gy1)-0.5);
-    vec3 g000 = vec3(gx0.x,gy0.x,gz0.x); vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
-    vec3 g010 = vec3(gx0.z,gy0.z,gz0.z); vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
-    vec3 g001 = vec3(gx1.x,gy1.x,gz1.x); vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
-    vec3 g011 = vec3(gx1.z,gy1.z,gz1.z); vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
-    vec4 norm0 = taylorInvSqrt(vec4(dot(g000,g000),dot(g010,g010),dot(g100,g100),dot(g110,g110)));
-    g000*=norm0.x; g010*=norm0.y; g100*=norm0.z; g110*=norm0.w;
-    vec4 norm1 = taylorInvSqrt(vec4(dot(g001,g001),dot(g011,g011),dot(g101,g101),dot(g111,g111)));
-    g001*=norm1.x; g011*=norm1.y; g101*=norm1.z; g111*=norm1.w;
-    float n000=dot(g000,Pf0); float n100=dot(g100,vec3(Pf1.x,Pf0.yz));
-    float n010=dot(g010,vec3(Pf0.x,Pf1.y,Pf0.z)); float n110=dot(g110,vec3(Pf1.xy,Pf0.z));
-    float n001=dot(g001,vec3(Pf0.xy,Pf1.z)); float n101=dot(g101,vec3(Pf1.x,Pf0.y,Pf1.z));
-    float n011=dot(g011,vec3(Pf0.x,Pf1.yz)); float n111=dot(g111,Pf1);
-    vec3 fade_xyz=fade(Pf0);
-    vec4 n_z=mix(vec4(n000,n100,n010,n110),vec4(n001,n101,n011,n111),fade_xyz.z);
-    vec2 n_yz=mix(n_z.xy,n_z.zw,fade_xyz.y);
-    float n_xyz=mix(n_yz.x,n_yz.y,fade_xyz.x);
-    return 2.2*n_xyz;
+  float hash(vec2 p) {
+    p = fract(p * vec2(234.34, 435.345));
+    p += dot(p, p + 34.23);
+    return fract(p.x * p.y);
   }
 
-  // Fractional Brownian Motion
-  float fbm(vec3 x) {
-    float v = 0.0;
-    float a = 0.5;
-    vec3 shift = vec3(100.0);
-    for (int i = 0; i < 4; ++i) {
-      v += a * cnoise(x);
-      x = x * 2.0 + shift;
-      a *= 0.5;
-    }
+  float noise(vec2 p) {
+    vec2 i = floor(p); vec2 f = fract(p);
+    f = f*f*(3.0-2.0*f);
+    return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
+  }
+
+  float fbm(vec2 p) {
+    float v=0.0; float a=0.5;
+    for(int i=0;i<5;i++){v+=a*noise(p);p=p*2.1+vec2(1.7,9.2);a*=0.5;}
     return v;
   }
 
   void main() {
     vec2 uv = vUv;
-    vec2 mouse = uMouse * 0.5;
+    vec2 mouse = uMouse * 0.2;
+    float t = uTime * 0.12;
 
-    float t = uTime * 0.15;
+    vec2 q = vec2(fbm(uv * 2.0 + mouse + vec2(t, 0.0)), fbm(uv * 2.0 + mouse + vec2(0.0, t)));
+    float n = fbm(uv * 3.0 + 2.5 * q + vec2(t * 0.4));
+    n = n * 0.5 + 0.5;
 
-    // Domain Warping for fluid effect
-    vec3 p = vec3(uv * 2.0 + mouse, t);
-    
-    vec3 q;
-    q.x = fbm(p + vec3(0.0, 0.0, t * 0.5));
-    q.y = fbm(p + vec3(5.2, 1.3, t * 0.6));
-    q.z = 0.0;
+    // Near-black gold palette — background must not compete with crown
+    vec3 baseA  = vec3(0.02, 0.01, 0.0);   // very dark warm brown
+    vec3 baseB  = vec3(0.04, 0.025, 0.0);  // slightly lighter
+    vec3 glowA  = vec3(0.12, 0.07, 0.01);  // dim gold glow
+    vec3 glowB  = vec3(0.07, 0.03, 0.0);   // amber
 
-    vec3 r;
-    r.x = fbm(p + 3.0 * q + vec3(1.7, 9.2, t * 0.8));
-    r.y = fbm(p + 3.0 * q + vec3(8.3, 2.8, t * 0.9));
-    r.z = 0.0;
+    vec3 col = mix(baseA, baseB, uv.x + q.x * 0.3);
+    col = mix(col, mix(glowA, glowB, uv.x), n * 0.35);
 
-    float n = fbm(p + 3.0 * r);
-    n = n * 0.5 + 0.5; // normalize to 0-1
-    n = pow(n, 1.5); // sharpen contrast
+    // Strong vignette — very dark edges
+    float vig = smoothstep(1.5, 0.2, length(uv - 0.5));
+    col *= vig * 0.9;
 
-    // Color palette - Active Theory deep fluid tones
-    vec3 colA = vec3(0.005, 0.015, 0.01); // ultra dark green
-    vec3 colB = vec3(0.01, 0.005, 0.02);  // ultra dark purple
-    vec3 colC = vec3(0.0, 0.6, 0.3);      // vibrant green liquid
-    vec3 colD = vec3(0.5, 0.1, 0.9);      // vibrant purple liquid
-
-    // Base background gradient based on coordinates and first warp pass
-    vec3 bg = mix(colA, colB, uv.x + q.x * 0.5);
-
-    // Glowing veins based on second warp pass
-    vec3 glowColor = mix(colC, colD, r.x);
-    vec3 col = mix(bg, glowColor, n * clamp(r.y * 1.5, 0.0, 1.0));
-
-    // Subtle vignette
-    float vignette = smoothstep(1.5, 0.2, length(uv - 0.5));
-    col *= vignette;
-
-    // Deep central glow to tie it together
-    float centerGlow = 1.0 - length((uv - 0.5) * vec2(1.2, 1.5));
-    centerGlow = clamp(centerGlow, 0.0, 1.0);
-    col += mix(colC, colD, 0.5) * 0.15 * pow(centerGlow, 3.0);
+    // Subtle central warmth under the crown
+    float centre = 1.0 - length((uv - 0.5) * vec2(1.0, 1.3));
+    centre = clamp(centre, 0.0, 1.0);
+    col += vec3(0.05, 0.025, 0.0) * pow(centre, 3.0) * n;
 
     gl_FragColor = vec4(col, 1.0);
   }
@@ -125,22 +69,20 @@ const fragmentShader = `
 export default function BackgroundShader() {
   const meshRef = useRef<THREE.Mesh>(null)
   const { size } = useThree()
-  const mouse = useRef([0, 0])
 
   const uniforms = useMemo(() => ({
-    uTime:       { value: 0 },
-    uMouse:      { value: new THREE.Vector2(0, 0) },
-    uResolution: { value: new THREE.Vector2(size.width, size.height) },
-  }), [size.width, size.height])
+    uTime:  { value: 0 },
+    uMouse: { value: new THREE.Vector2(0, 0) },
+  }), [])
 
   useFrame(({ clock, pointer }) => {
     uniforms.uTime.value = clock.getElapsedTime()
-    uniforms.uMouse.value.lerp(new THREE.Vector2(pointer.x, pointer.y), 0.04)
+    uniforms.uMouse.value.lerp(new THREE.Vector2(pointer.x, pointer.y), 0.03)
   })
 
   return (
-    <mesh ref={meshRef} position={[0, 0, -2]} scale={[1, 1, 1]}>
-      <planeGeometry args={[8, 8, 1, 1]} />
+    <mesh ref={meshRef} position={[0, 0, -2]}>
+      <planeGeometry args={[9, 9, 1, 1]} />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
