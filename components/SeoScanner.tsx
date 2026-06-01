@@ -24,13 +24,13 @@ function generateResult(url: string): ScanResult {
 
   return {
     score,
-    issues: [
-      { severity: "critical", text: "Missing title tag optimizations on key pages" },
-      { severity: "critical", text: "No structured data / schema markup detected" },
-      { severity: "warning",  text: "Page load speed above 3.2s on mobile" },
-      { severity: "warning",  text: "Meta descriptions missing on 60%+ of pages" },
-      { severity: "info",     text: "Internal linking structure could be improved" },
-    ].slice(0, 3 + (seed % 3)),
+    issues: ([
+      { severity: "critical" as const, text: "Missing title tag optimizations on key pages" },
+      { severity: "critical" as const, text: "No structured data / schema markup detected" },
+      { severity: "warning"  as const, text: "Page load speed above 3.2s on mobile" },
+      { severity: "warning"  as const, text: "Meta descriptions missing on 60%+ of pages" },
+      { severity: "info"     as const, text: "Internal linking structure could be improved" },
+    ] as const).slice(0, 3 + (seed % 3)),
     opportunities: [
       "Target 40+ long-tail keywords with low competition",
       "Local pack ranking opportunity for primary service area",
