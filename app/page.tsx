@@ -2,13 +2,14 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import {
   Search, TrendingUp, BarChart2, Link2, MapPin, FileSearch,
-  ArrowRight, ChevronRight, Star, CheckCircle2, Zap, Shield, Globe, Users,
+  ArrowRight, ChevronRight, Star, CheckCircle2, Globe,
 } from "lucide-react"
 import ParticleField from "@/components/ParticleField"
 import SeoScanner from "@/components/SeoScanner"
 import TiltCard from "@/components/TiltCard"
 import AnimatedCounter from "@/components/AnimatedCounter"
 import RankingChart from "@/components/RankingChart"
+import FAQItem from "@/components/FAQItem"
 import { faqSchema, serviceSchema } from "@/lib/structured-data"
 
 export const metadata: Metadata = {
@@ -386,5 +387,3 @@ export default function HomePage() {
   )
 }
 
-// ── FAQ accordion item (client component) ────────────────────────────────────
-import FAQItem from "@/components/FAQItem"
