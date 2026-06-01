@@ -17,7 +17,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     lenisRef.current = lenis
 
     // Expose globally so GSAP ScrollTrigger can hook in
-    ;(window as Window & { lenis?: Lenis }).lenis = lenis
+    ;(window as unknown as Record<string, unknown>).lenis = lenis
 
     function raf(time: number) {
       lenis.raf(time)
