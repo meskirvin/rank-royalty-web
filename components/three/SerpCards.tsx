@@ -6,8 +6,6 @@ import { RoundedBox, Text } from "@react-three/drei"
 import * as THREE from "three"
 
 interface CardData {
-  position: [number, number, number]
-  rotation: [number, number, number]
   rank: number
   keyword: string
   domain: string
@@ -17,8 +15,6 @@ interface CardData {
 }
 
 const CARDS: CardData[] = [
-  { position: [-2.2,  0.8, 0.4], rotation: [0.05, 0.25, -0.05], rank: 1, keyword: "seo agency near me",        domain: "rankroyalty.com",   color: "#00ff87", speed: 0.9,  phase: 0 },
-  { position: [ 2.4,  0.4, 0.2], rotation: [0.0, -0.2, 0.04],   rank: 1, keyword: "best seo company",          domain: "rankroyalty.com",   color: "#00ff87", speed: 1.1,  phase: 1.5 },
   { rank: 1, keyword: "seo agency near me",        domain: "rankroyalty.com",   color: "#00ff87", speed: 0.9,  phase: 0 },
   { rank: 1, keyword: "best seo company",          domain: "rankroyalty.com",   color: "#00ff87", speed: 1.1,  phase: 1.5 },
   { rank: 2, keyword: "local seo services",        domain: "rankroyalty.com",   color: "#a78bfa", speed: 0.85, phase: 3.0 },
@@ -65,11 +61,7 @@ function SerpCard({ data, index }: { data: CardData; index: number }) {
   const glowColor = new THREE.Color(data.color)
 
   return (
-    <group
-      ref={groupRef}
-      position={data.position}
-      rotation={data.rotation}
-    >
+    <group ref={groupRef}>
       {/* Card body */}
       <RoundedBox args={[1.7, 0.72, 0.04]} radius={0.04} smoothness={4}>
         <meshPhysicalMaterial
